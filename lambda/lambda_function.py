@@ -69,8 +69,7 @@ def _get_asset_id(sw_client, asset_name, maxResults=1):
     Raises:
         ValueError: If the asset name does not exist or no asset id could be found for the given asset name.
     """
-    query_statement = f"SELECT asset_id, asset_name FROM asset WHERE asset_name = '{
-        asset_name}'"
+    query_statement = f"SELECT asset_id, asset_name FROM asset WHERE asset_name = '{asset_name}'"
     data = _execute_sitewise_query(sw_client, query_statement, maxResults)
     # Check if 'asset_id' exists and is not empty
     if data and 'asset_id' in data and data['asset_id']:
@@ -111,14 +110,12 @@ def _get_property_id(sw_client, asset_id, property_name, maxResults=20):
     Returns:
         property id
     """
-    query_statement = f"SELECT asset_id, property_id, property_name FROM asset_property WHERE asset_id ='{
-        asset_id}' AND property_name = '{property_name}'"
+    query_statement = f"SELECT asset_id, property_id, property_name FROM asset_property WHERE asset_id ='{asset_id}' AND property_name = '{property_name}'"
     data = _execute_sitewise_query(sw_client, query_statement, maxResults)
     if data and 'property_id' in data:
         return data['property_id'][0]
     else:
-        raise ValueError(f"Property {property_name} for asset {
-                         asset_id} not found")
+        raise ValueError(f"Property {property_name} for asset {asset_id} not found")
 
 
 def _get_property_uom(sw_client, asset_id, property_id):
@@ -154,8 +151,7 @@ def _get_latest_value(sw_client, asset_id, property_id, maxResults=1):
     Returns:
         Timestamp, latest value, unit
     """
-    query_statement = f"SELECT asset_id, property_id, event_timestamp, double_value, string_value FROM latest_value_time_series WHERE asset_id = '{
-        asset_id}' AND property_id = '{property_id}'"
+    query_statement = f"SELECT asset_id, property_id, event_timestamp, double_value, string_value FROM latest_value_time_series WHERE asset_id = '{asset_id}' AND property_id = '{property_id}'"
     _, unit = _get_property_uom(sw_client, asset_id, property_id)
     data = _execute_sitewise_query(sw_client, query_statement, maxResults)
     if data and 'event_timestamp' in data:
@@ -173,12 +169,10 @@ def _get_latest_value(sw_client, asset_id, property_id, maxResults=1):
         else:
             measurement = 'N/A'  # Or some placeholder if no value is available
 
-        logger.info(f"Latest measurement was {
-                    measurement} {unit} at {dt_str}")
+        logger.info(f"Latest measurement was {measurement} {unit} at {dt_str}")
         return dt_str, measurement, unit
     else:
-        raise ValueError(f"Latest value for property {
-                         property_id} on asset {asset_id} not found")
+        raise ValueError(f"Latest value for property {property_id} on asset {asset_id} not found")
 
 
 def get_asset_property_aggregates(asset_id, property_id, start_time, end_time, resolution, aggregate_types, qualities=None, next_token=None, max_results=100):
@@ -272,10 +266,8 @@ def get_aggregated_value(sw_client, asset_name, property_name, resolution):
     try:
         property_id = _get_property_id(sw_client, asset_id, property_name)
     except ValueError as e:
-        logger.error(f"Property '{property_name}' not found for asset '{
-                     asset_name}': {e}")
-        raise ValueError(f"Property '{property_name}' not found for asset '{
-                         asset_name}'") from e
+        logger.error(f"Property '{property_name}' not found for asset '{asset_name}': {e}")
+        raise ValueError(f"Property '{property_name}' not found for asset '{asset_name}'") from e
 
     try:
         start_time = datetime.now(timezone.utc) - timedelta(days=2)
@@ -307,10 +299,8 @@ def get_aggregated_value(sw_client, asset_name, property_name, resolution):
             raise ValueError(f"No aggregated data found for property '{property_name}' on asset '{asset_name}'")
 
     except Exception as e:
-        logger.error(f"Error retrieving aggregated value for property '{
-                     property_name}' on asset '{asset_name}': {e}")
-        raise ValueError(f"Error retrieving aggregated value for property '{
-                         property_name}' on asset '{asset_name}'") from e
+        logger.error(f"Error retrieving aggregated value for property '{property_name}' on asset '{asset_name}': {e}")
+        raise ValueError(f"Error retrieving aggregated value for property '{property_name}' on asset '{asset_name}'") from e
 
 def get_latest_value(sw_client, asset_name, property_name, maxResults=1):
     """
@@ -334,10 +324,8 @@ def get_latest_value(sw_client, asset_name, property_name, maxResults=1):
     try:
         property_id = _get_property_id(sw_client, asset_id, property_name)
     except ValueError as e:
-        logger.error(f"Property '{property_name}' not found for asset '{
-                     asset_name}': {e}")
-        raise ValueError(f"Property '{property_name}' not found for asset '{
-                         asset_name}'") from e
+        logger.error(f"Property '{property_name}' not found for asset '{asset_name}': {e}")
+        raise ValueError(f"Property '{property_name}' not found for asset '{asset_name}'") from e
 
     try:
         event_timestamp, latest_value, unit = _get_latest_value(
@@ -350,10 +338,8 @@ def get_latest_value(sw_client, asset_name, property_name, maxResults=1):
             "units": unit
         }
     except ValueError as e:
-        logger.error(f"Error retrieving latest value for property '{
-                     property_name}' on asset '{asset_name}': {e}")
-        raise ValueError(f"Error retrieving latest value for property '{
-                         property_name}' on asset '{asset_name}'") from e
+        logger.error(f"Error retrieving latest value for property '{property_name}' on asset '{asset_name}': {e}")
+        raise ValueError(f"Error retrieving latest value for property '{property_name}' on asset '{asset_name}'") from e
 
 
 def list_asset_models(sw_client):
